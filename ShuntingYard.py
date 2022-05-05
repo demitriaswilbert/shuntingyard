@@ -85,20 +85,16 @@ tan_token = {
     'func'      : lambda a : tan(a[0])
 }
 pi_token = {
-    'type'      : 'function',
-    'value'    : 'pi',
-    'assoc'     : 'right',
-    'precedence' : 4,
-    'operands'  : 0,
-    'func'      : lambda a : pi
+    'type'      : 'number',
+    'value'    : pi,
 }
 round_token = {
     'type'      : 'function',
     'value'    : 'round',
     'assoc'     : 'right',
     'precedence' : 4,
-    'operands'  : 1,
-    'func'      : lambda a : round(a[0])
+    'operands'  : 2,
+    'func'      : lambda a : round(a[1], int(a[0]))
 }
 
 def cnmt(a):
@@ -122,22 +118,23 @@ def process(token):
             while ((len(opstack) > 0) and (opstack[-1] != openbrace_token)) :
                 queue.append(opstack.pop())
             opstack.pop()
-            if(len(opstack) > 0):
+            while (len(opstack) > 0) :
                 if(opstack[-1]['type'] == 'function'):
                     queue.append(opstack.pop())
+                else: break
 
         else:
             while(((len(opstack) > 0) and (token['precedence'] <= opstack[-1]['precedence'])) and (token['assoc'] == 'left')):
                 queue.append(opstack.pop())
             opstack.append(token)
-    
-    # print('queue: ', end='')
-    # for i in range(len(queue)):
-    #     print(queue[i]['value'], end=' ')
-    # print('\nstack: ', end='')
-    # for i in range(len(opstack)):
-    #     print(opstack[i]['value'], end=' ')
-    # print()
+    print('in :', token['value'])
+    print('queue: ', end='')
+    for i in range(len(queue)):
+        print(queue[i]['value'], end=' ')
+    print('\nstack: ', end='')
+    for i in range(len(opstack)):
+        print(opstack[i]['value'], end=' ')
+    print()
 
 def post_process():
     while len(opstack) > 0:
